@@ -84,7 +84,7 @@
       <link href="/2025/11/29/%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF%E9%97%AE%E9%A2%98%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95/"/>
       <url>/2025/11/29/%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF%E9%97%AE%E9%A2%98%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95/</url>
       
-        <content type="html"><![CDATA[<p>#<strong>约瑟夫环问题</strong></p><p>约瑟夫环对于学过算法的应该很熟悉了吧，其问题描述一般是如下情景：<br>    * N个人围成一圈，从第一个开始报数，第M个将被杀掉，最后剩下一个，其余人都将被杀掉。例如N&#x3D;6，M&#x3D;5，被杀掉的顺序是：5，4，6，2，3，求最后剩下的人的编号</p><p>解决这个问题也很容易想到循环链表，我们只需要创建一个无头节点的循环链表，然后从第一个开始计数。每移动一个节点索引加一，直到索引等于M时移除该节点，然后将索引重置为1，循环至仅剩一个节点即可</p><p>代码实现：</p><pre><code>typedef struct node {    int data;    node* next;} node;void create(node*&amp; L, node*&amp; r, int n) {    L = new node;     L-&gt;data = 1;     r = L;    for (int i = 1; i &lt; n; i++) {        node* s = new node;         s-&gt;data = i + 1;         r-&gt;next = s;         r = s;     }    r-&gt;next = L; }void out(node*&amp; p, node*&amp; pre, int k, int m) {    while (--k) {        p = p-&gt;next;        pre = pre-&gt;next;    }    int i = 1;    while (p-&gt;next != p) {        if (i == m) {             i = 1;             cout &lt;&lt; p-&gt;data &lt;&lt; &quot; &quot;;            pre-&gt;next = p-&gt;next;             delete p;             p = pre-&gt;next;         } else {             pre = pre-&gt;next;            p = p-&gt;next;            ++i;        }    }cout &lt;&lt; p-&gt;data &lt;&lt; endl;}</code></pre><p><em>但这太复杂了不是吗</em><br>我们不仅要手搓一个循环链表，还容易访问超界（我第一次写就这样）</p><p><strong>所以我们有一个更简单的方式解决这个问题：递归实现</strong></p><p>先看数学公式：</p><blockquote><p>f(N,M)&#x3D;(f(N−1,M)+M)%n</p></blockquote><p>为了理解这个公式，我们先假设有n个人，编号分别从0到n-1:</p><p>0, 1, 2, 3, 4, 5, 6 … (M-1)%n, M%n, (M+1)%n … n-2, n-1</p><p>显然，第(M-1)%n个是第一个嗝屁的<br>这时可能有人会想：我们为什么要用%n来表示编号呢？直接写M-1不是一样的吗？</p><p>很简单，我们去掉那个第一个嗝屁的倒霉蛋之后，从他的下一个开始数，就可以得到一个新的序列：</p><p>M%n, (M+1)%n, (M+2)%n … n-1, 0, 1, 2, 3 … (M-2)%n</p><p>那么对他们重新编号后就可以得：</p><p>0, 1, 2 ………….. n-2</p><p>相互对比后，我们可以很容易根据%n判断出上面的序列是在n个人时排的，下面编号n_2与上面编号n_1的对应关系便是：<br>                    n_1 &#x3D; (n_2 + M)%n<br>这就是上面的序号为什么要加一个%n</p><p>代码实现：</p><pre><code>int cir(int n,int M){    int p=0;    for(int i=2;i&lt;=n;i++)    {    p=(p+M)%i;    }    return p+1;}</code></pre><p>这样就解决了</p>]]></content>
+        <content type="html"><![CDATA[<p>#<strong>约瑟夫环问题</strong></p><p>约瑟夫环对于学过算法的应该很熟悉了吧，其问题描述一般是如下情景：<br>    * N个人围成一圈，从第一个开始报数，第M个将被杀掉，最后剩下一个，其余人都将被杀掉。例如N&#x3D;6，M&#x3D;5，被杀掉的顺序是：5，4，6，2，3，求最后剩下的人的编号</p><p>解决这个问题也很容易想到循环链表，我们只需要创建一个无头节点的循环链表，然后从第一个开始计数。每移动一个节点索引加一，直到索引等于M时移除该节点，然后将索引重置为1，循环至仅剩一个节点即可</p><p>代码实现：</p><pre><code>typedef struct node {    int data;    node* next;} node;void create(node*&amp; L, node*&amp; r, int n) {    L = new node;     L-&gt;data = 1;     r = L;    for (int i = 1; i &lt; n; i++) {        node* s = new node;         s-&gt;data = i + 1;         r-&gt;next = s;         r = s;     }    r-&gt;next = L; }void out(node*&amp; p, node*&amp; pre, int k, int m) {    while (--k) {        p = p-&gt;next;        pre = pre-&gt;next;    }    int i = 1;    while (p-&gt;next != p) {        if (i == m) {             i = 1;             cout &lt;&lt; p-&gt;data &lt;&lt; &quot; &quot;;            pre-&gt;next = p-&gt;next;             delete p;             p = pre-&gt;next;         } else {             pre = pre-&gt;next;            p = p-&gt;next;            ++i;        }    }cout &lt;&lt; p-&gt;data &lt;&lt; endl;}</code></pre><p><em>但这太复杂了不是吗</em><br>我们不仅要手搓一个循环链表，还容易访问超界（我第一次写就这样）</p><p><strong>所以我们有一个更简单的方式解决这个问题：递归实现</strong></p><p>先看数学公式：</p><blockquote><p>f(N,M)&#x3D;(f(N−1,M)+M)%n</p></blockquote><p>为了理解这个公式，我们先假设有n个人，编号分别从0到n-1:</p><blockquote><p>0, 1, 2, 3, 4, 5, 6 … (M-1)%n, M%n, (M+1)%n … n-2, n-1</p></blockquote><p>显然，第(M-1)%n个是第一个嗝屁的<br>这时可能有人会想：我们为什么要用%n来表示编号呢？直接写M-1不是一样的吗？</p><p>很简单，我们去掉那个第一个嗝屁的倒霉蛋之后，从他的下一个开始数，就可以得到一个新的序列：</p><blockquote><p>M%n, (M+1)%n, (M+2)%n … n-1, 0, 1, 2, 3 … (M-2)%n</p></blockquote><p>那么对他们重新编号后就可以得：</p><blockquote><p>0, 1, 2 ………….. n-2</p></blockquote><p>相互对比后，我们可以很容易根据%n判断出上面的序列是在n个人时排的，下面编号n_2与上面编号n_1的对应关系便是：</p><blockquote><p>n_1 &#x3D; (n_2 + M)%n</p></blockquote><p>这就是上面的序号为什么要加一个%n</p><p>代码实现：</p><pre><code>int cir(int n,int M){    int p=0;    for(int i=2;i&lt;=n;i++)    {    p=(p+M)%i;    }    return p+1;}</code></pre><p>这样就解决了</p>]]></content>
       
       
       <categories>
@@ -105,11 +105,11 @@
     
     
     <entry>
-      <title>wings</title>
-      <link href="/2025/11/29/wings/"/>
-      <url>/2025/11/29/wings/</url>
+      <title>travel</title>
+      <link href="/2025/11/29/travel/"/>
+      <url>/2025/11/29/travel/</url>
       
-        <content type="html"><![CDATA[<p><strong>鞘翅</strong></p><p>生命不因生存而改变，<br>却因生存而丰富。<br>当甲虫终于张开鞘翅，<br>生命便不再屈服。<br>从水下诞生的生命，<br>到土中生长的绿芽。<br>从脆弱的昆虫<br>到强壮的雄鹰。<br>生命不因任何生物而改变，<br>所有生物<br>被赋予平等的脆弱。<br>于是生命进化出鞘翅，<br>去保护脆弱的自己。<br>所有的生命形态，<br>均是生命本身的鞘翅。<br>尖牙、利爪、翅膀，亦或是科技，<br>保护了最脆弱的生命，<br>宣布生命的不屈，<br>正如甲虫鞘翅下真正的翅膀，<br>生命将会<br>展翅飞翔</p>]]></content>
+        <content type="html"><![CDATA[<p><strong>旅途</strong></p><p>我们出发了，<br>为一次漫长而未知的旅途。<br>风沙不会留下沧桑的痕迹，<br>亦无法抹去我们的足迹<br>诞生于此，<br>又沉睡于此。<br>在旅途中，<br>我们与日月同辉，<br>与天地等寿。</p>]]></content>
       
       
       <categories>
@@ -130,11 +130,11 @@
     
     
     <entry>
-      <title>travel</title>
-      <link href="/2025/11/29/travel/"/>
-      <url>/2025/11/29/travel/</url>
+      <title>wings</title>
+      <link href="/2025/11/29/wings/"/>
+      <url>/2025/11/29/wings/</url>
       
-        <content type="html"><![CDATA[<p><strong>旅途</strong></p><p>我们出发了，<br>为一次漫长而未知的旅途。<br>风沙不会留下沧桑的痕迹，<br>亦无法抹去我们的足迹<br>诞生于此，<br>又沉睡于此。<br>在旅途中，<br>我们与日月同辉，<br>与天地等寿。</p>]]></content>
+        <content type="html"><![CDATA[<p><strong>鞘翅</strong></p><p>生命不因生存而改变，<br>却因生存而丰富。<br>当甲虫终于张开鞘翅，<br>生命便不再屈服。<br>从水下诞生的生命，<br>到土中生长的绿芽。<br>从脆弱的昆虫<br>到强壮的雄鹰。<br>生命不因任何生物而改变，<br>所有生物<br>被赋予平等的脆弱。<br>于是生命进化出鞘翅，<br>去保护脆弱的自己。<br>所有的生命形态，<br>均是生命本身的鞘翅。<br>尖牙、利爪、翅膀，亦或是科技，<br>保护了最脆弱的生命，<br>宣布生命的不屈，<br>正如甲虫鞘翅下真正的翅膀，<br>生命将会<br>展翅飞翔</p>]]></content>
       
       
       <categories>
@@ -171,6 +171,17 @@
     
     
     <entry>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>关于</title>
       <link href="/about/index.html"/>
       <url>/about/index.html</url>
@@ -182,9 +193,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>音乐</title>
+      <link href="/music/index.html"/>
+      <url>/music/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -205,10 +216,10 @@
     
     <entry>
       <title></title>
-      <link href="/css/custom.css"/>
-      <url>/css/custom.css</url>
+      <link href="/js/universe.js"/>
+      <url>/js/universe.js</url>
       
-        <content type="html"><![CDATA[#footer {  background: transparent !important;}#page-header {  background: transparent !important;}#footer::before{    background: transparent !important;}#page-header::before{    background: transparent !important;}[data-theme="dark"] #footer::before{    background: transparent !important;}[data-theme="dark"] #page-header::before{    background: transparent !important;}[data-theme="light"] #site-name,[data-theme="light"] #site-title,[data-theme="light"] #site-subtitle,[data-theme="light"] #post-info {  animation: none;}/* 夜间模式生效 */[data-theme="dark"] #site-name,[data-theme="dark"] #site-title {  animation: light_15px 10s linear infinite;}[data-theme="dark"] #site-subtitle {  animation: light_10px 10s linear infinite;}[data-theme="dark"] #post-info {  animation: light_5px 10s linear infinite;}/* 关键帧描述 */@keyframes light_15px {  0% {    text-shadow: #5636ed 0 0 15px;  }  12.5% {    text-shadow: #11ee5e 0 0 15px;  }  25% {    text-shadow: #f14747 0 0 15px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 15px;  }  50% {    text-shadow: #b347f1 0 0 15px;  }  62.5% {    text-shadow: #002afa 0 0 15px;  }  75% {    text-shadow: #ed709b 0 0 15px;  }  87.5% {    text-shadow: #39c5bb 0 0 15px;  }  100% {    text-shadow: #5636ed 0 0 15px;  }}@keyframes light_10px {  0% {    text-shadow: #5636ed 0 0 10px;  }  12.5% {    text-shadow: #11ee5e 0 0 10px;  }  25% {    text-shadow: #f14747 0 0 10px;  }  37.5% {    text-shadow: #f1a247 0 0 10px;  }  50% {    text-shadow: #f1ee47 0 0 10px;  }  50% {    text-shadow: #b347f1 0 0 10px;  }  62.5% {    text-shadow: #002afa 0 0 10px;  }  75% {    text-shadow: #ed709b 0 0 10px;  }  87.5% {    text-shadow: #39c5bb 0 0 10px;  }  100% {    text-shadow: #5636ed 0 0 10px;  }}@keyframes light_5px {  0% {    text-shadow: #5636ed 0 0 5px;  }  12.5% {    text-shadow: #11ee5e 0 0 5px;  }  25% {    text-shadow: #f14747 0 0 5px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 5px;  }  50% {    text-shadow: #b347f1 0 0 5px;  }  62.5% {    text-shadow: #002afa 0 0 5px;  }  75% {    text-shadow: #ed709b 0 0 5px;  }  87.5% {    text-shadow: #39c5bb 0 0 5px;  }  100% {    text-shadow: #5636ed 0 0 5px;  }}/* 侧边栏个人信息卡片动态渐变色 */#aside-content > .card-widget.card-info {  background: linear-gradient(    -45deg,    #e8d8b9,    #eccec5,    #a3e9eb,    #bdbdf0,    #eec1ea  );  box-shadow: 0 0 5px rgb(66, 68, 68);  position: relative;  background-size: 400% 400%;  -webkit-animation: Gradient 10s ease infinite;  -moz-animation: Gradient 10s ease infinite;  animation: Gradient 10s ease infinite !important;}@-webkit-keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}@-moz-keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}@keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}/* 黑夜模式适配 */[data-theme="dark"] #aside-content > .card-widget.card-info {  background: #191919ee;}/* 个人信息Follow me按钮 */#aside-content > .card-widget.card-info > #card-info-btn {  background-color: #3eb8be;  border-radius: 8px;}]]></content>
+        <content type="html"><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};dark()]]></content>
       
     </entry>
     
@@ -227,21 +238,10 @@
     
     <entry>
       <title></title>
-      <link href="/js/universe.js"/>
-      <url>/js/universe.js</url>
+      <link href="/css/custom.css"/>
+      <url>/css/custom.css</url>
       
-        <content type="html"><![CDATA[function dark() {window.requestAnimationFrame=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;var n,e,i,h,t=.05,s=document.getElementById("universe"),o=!0,a="180,184,240",r="226,225,142",d="226,225,224",c=[];function f(){n=window.innerWidth,e=window.innerHeight,i=.216*n,s.setAttribute("width",n),s.setAttribute("height",e)}function u(){h.clearRect(0,0,n,e);for(var t=c.length,i=0;i<t;i++){var s=c[i];s.move(),s.fadeIn(),s.fadeOut(),s.draw()}}function y(){this.reset=function(){this.giant=m(3),this.comet=!this.giant&&!o&&m(10),this.x=l(0,n-10),this.y=l(0,e),this.r=l(1.1,2.6),this.dx=l(t,6*t)+(this.comet+1-1)*t*l(50,120)+2*t,this.dy=-l(t,6*t)-(this.comet+1-1)*t*l(50,120),this.fadingOut=null,this.fadingIn=!0,this.opacity=0,this.opacityTresh=l(.2,1-.4*(this.comet+1-1)),this.do=l(5e-4,.002)+.001*(this.comet+1-1)},this.fadeIn=function(){this.fadingIn&&(this.fadingIn=!(this.opacity>this.opacityTresh),this.opacity+=this.do)},this.fadeOut=function(){this.fadingOut&&(this.fadingOut=!(this.opacity<0),this.opacity-=this.do/2,(this.x>n||this.y<0)&&(this.fadingOut=!1,this.reset()))},this.draw=function(){if(h.beginPath(),this.giant)h.fillStyle="rgba("+a+","+this.opacity+")",h.arc(this.x,this.y,2,0,2*Math.PI,!1);else if(this.comet){h.fillStyle="rgba("+d+","+this.opacity+")",h.arc(this.x,this.y,1.5,0,2*Math.PI,!1);for(var t=0;t<30;t++)h.fillStyle="rgba("+d+","+(this.opacity-this.opacity/20*t)+")",h.rect(this.x-this.dx/4*t,this.y-this.dy/4*t-2,2,2),h.fill()}else h.fillStyle="rgba("+r+","+this.opacity+")",h.rect(this.x,this.y,this.r,this.r);h.closePath(),h.fill()},this.move=function(){this.x+=this.dx,this.y+=this.dy,!1===this.fadingOut&&this.reset(),(this.x>n-n/4||this.y<0)&&(this.fadingOut=!0)},setTimeout(function(){o=!1},50)}function m(t){return Math.floor(1e3*Math.random())+1<10*t}function l(t,i){return Math.random()*(i-t)+t}f(),window.addEventListener("resize",f,!1),function(){h=s.getContext("2d");for(var t=0;t<i;t++)c[t]=new y,c[t].reset();u()}(),function t(){document.getElementsByTagName('html')[0].getAttribute('data-theme')=='dark'&&u(),window.requestAnimationFrame(t)}()};dark()]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>音乐</title>
-      <link href="/music/index.html"/>
-      <url>/music/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[#footer {  background: transparent !important;}#page-header {  background: transparent !important;}#footer::before{    background: transparent !important;}#page-header::before{    background: transparent !important;}[data-theme="dark"] #footer::before{    background: transparent !important;}[data-theme="dark"] #page-header::before{    background: transparent !important;}[data-theme="light"] #site-name,[data-theme="light"] #site-title,[data-theme="light"] #site-subtitle,[data-theme="light"] #post-info {  animation: none;}/* 夜间模式生效 */[data-theme="dark"] #site-name,[data-theme="dark"] #site-title {  animation: light_15px 10s linear infinite;}[data-theme="dark"] #site-subtitle {  animation: light_10px 10s linear infinite;}[data-theme="dark"] #post-info {  animation: light_5px 10s linear infinite;}/* 关键帧描述 */@keyframes light_15px {  0% {    text-shadow: #5636ed 0 0 15px;  }  12.5% {    text-shadow: #11ee5e 0 0 15px;  }  25% {    text-shadow: #f14747 0 0 15px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 15px;  }  50% {    text-shadow: #b347f1 0 0 15px;  }  62.5% {    text-shadow: #002afa 0 0 15px;  }  75% {    text-shadow: #ed709b 0 0 15px;  }  87.5% {    text-shadow: #39c5bb 0 0 15px;  }  100% {    text-shadow: #5636ed 0 0 15px;  }}@keyframes light_10px {  0% {    text-shadow: #5636ed 0 0 10px;  }  12.5% {    text-shadow: #11ee5e 0 0 10px;  }  25% {    text-shadow: #f14747 0 0 10px;  }  37.5% {    text-shadow: #f1a247 0 0 10px;  }  50% {    text-shadow: #f1ee47 0 0 10px;  }  50% {    text-shadow: #b347f1 0 0 10px;  }  62.5% {    text-shadow: #002afa 0 0 10px;  }  75% {    text-shadow: #ed709b 0 0 10px;  }  87.5% {    text-shadow: #39c5bb 0 0 10px;  }  100% {    text-shadow: #5636ed 0 0 10px;  }}@keyframes light_5px {  0% {    text-shadow: #5636ed 0 0 5px;  }  12.5% {    text-shadow: #11ee5e 0 0 5px;  }  25% {    text-shadow: #f14747 0 0 5px;  }  37.5% {    text-shadow: #f1a247 0 0 15px;  }  50% {    text-shadow: #f1ee47 0 0 5px;  }  50% {    text-shadow: #b347f1 0 0 5px;  }  62.5% {    text-shadow: #002afa 0 0 5px;  }  75% {    text-shadow: #ed709b 0 0 5px;  }  87.5% {    text-shadow: #39c5bb 0 0 5px;  }  100% {    text-shadow: #5636ed 0 0 5px;  }}/* 侧边栏个人信息卡片动态渐变色 */#aside-content > .card-widget.card-info {  background: linear-gradient(    -45deg,    #e8d8b9,    #eccec5,    #a3e9eb,    #bdbdf0,    #eec1ea  );  box-shadow: 0 0 5px rgb(66, 68, 68);  position: relative;  background-size: 400% 400%;  -webkit-animation: Gradient 10s ease infinite;  -moz-animation: Gradient 10s ease infinite;  animation: Gradient 10s ease infinite !important;}@-webkit-keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}@-moz-keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}@keyframes Gradient {  0% {    background-position: 0% 50%;  }  50% {    background-position: 100% 50%;  }  100% {    background-position: 0% 50%;  }}/* 黑夜模式适配 */[data-theme="dark"] #aside-content > .card-widget.card-info {  background: #191919ee;}/* 个人信息Follow me按钮 */#aside-content > .card-widget.card-info > #card-info-btn {  background-color: #3eb8be;  border-radius: 8px;}]]></content>
       
     </entry>
     
